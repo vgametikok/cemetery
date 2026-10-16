@@ -1,6 +1,6 @@
 (function(){
 // Экономика, время суток, захоронения, турели, отчёт
-const S = { day:1, time:8*60, phase:'day', money:100, rep:50, level:1, bHp:100, coffins:[], bodies:[], remains:[], arrivals:[], buried:0, nextId:1, merchant:null, nightT:0,
+const S = { day:1, time:8*60, phase:'day', money:100, rep:50, level:1, bHp:400, bMax:400, coffins:[], bodies:[], remains:[], arrivals:[], buried:0, nextId:1, merchant:null, nightT:0,
   weapons:{pistol:true,shotgun:false,salt:false}, weapon:'pistol', reloadT:0, cart:null,
   ammo:{pistol:{mag:8,cap:8,res:24},shotgun:{mag:0,cap:6,res:0},salt:{mag:0,cap:5,res:0}}, inv:{gun:0,vac:0,med:0,rem:{ghost:0,vampire:0,witch:0}}, medCab:3, placing:null, preview:null, trashDone:0, bin:0, holy:false, turrets:[], night:{kills:{ghost:0,vampire:0,witch:0,zombie:0},dmg:0,graves:0,waves:[]}, dayIncome:0, over:false };
 const LEVELS=[null,{n:'Базовые могилы',b:0},{n:'Надгробия',b:0.3},{n:'Памятники и скамейки',b:0.5},{n:'Мемориалы + музыка',b:1.0},{n:'Мемориальный комплекс',b:1.3}];
@@ -100,9 +100,9 @@ const secOpen=id=>sections.find(s=>s.id===id).unlocked;
 function zoneHint(){ for(const s of sections){ if(s.kind==='plots') continue; const c=s.kind==='crem'?CREM_DOOR:new THREE.Vector3(s.cx,0,s.cz+(s.kind==='morgue'?3:0)); if(!near(c,s.kind==='altar'?9:4)) continue;
   if(!s.unlocked) return (s.kind==='crem'||s.kind==='altar')?`${s.name} — пока недоступно`:`${s.name} — закрыто. Открыть: компьютер в офисе, $${s.price}`;
   return s.kind==='crem'?'Крематорий работает: принесите гроб к двери':s.kind==='morgue'?'':'Алтарь восстановлен — ритуалы появятся позже'; } return ''; }
-function heal(){ if(player.hp>=100) return log('Здоровье полное');
-  if(nearPt(MEDCAB,2)&&S.medCab>0){ S.medCab--; medkits[S.medCab].visible=false; player.hp=Math.min(100,player.hp+50); return log('Аптечка использована: +50'); }
-  if(S.inv.med>0){ S.inv.med--; player.hp=Math.min(100,player.hp+50); return log('Аптечка из инвентаря: +50'); } log('Нет аптечек'); }
+function heal(){ if(player.hp>=player.maxHp) return log('Здоровье полное');
+  if(nearPt(MEDCAB,2)&&S.medCab>0){ S.medCab--; medkits[S.medCab].visible=false; player.hp=Math.min(player.maxHp,player.hp+200); return log('Аптечка использована: +200'); }
+  if(S.inv.med>0){ S.inv.med--; player.hp=Math.min(player.maxHp,player.hp+200); return log('Аптечка из инвентаря: +200'); } log('Нет аптечек'); }
 function interact(){
   if(player.trash){ if(near(CONTAINER,3.2)){ if(S.bin>=BIN_CAP) return log('Контейнер полон — опустеет на закате'); if(S.money<2) return log('Нужно $2 за вывоз мусора');
     scene.remove(player.trash); player.trash=null; S.trashDone++; S.bin++; S.money-=2; binFill.m.scale.y=S.bin/BIN_CAP; binFill.m.position.y=0.1+0.55*S.bin/BIN_CAP; log(`Мусор выброшен (−$2), контейнер ${S.bin}/${BIN_CAP}`); } else log('Контейнер — за воротами'); return; }
@@ -161,7 +161,7 @@ function shopItems(){
   if(S.level<5) it.push({ label:`Улучшить здание → ур.${S.level+1}: ${LEVELS[S.level+1].n}`, cost:UPG_COST[S.level], buy:()=>{ S.level++; } });
   sections.filter(s=>!s.unlocked).forEach(s=>it.push({ label:`Открыть: ${s.kind==='plots'?'['+s.order+'] ':''}${s.name}${s.kind==='plots'?' (+места, нужна расчистка)':s.kind==='crem'?' (кремация)':' (пока заглушка)'}`, cost:s.price, buy:()=>{ unlockSection(s); if(s.id==='morgue') setMorgueLock(false); }, na:s.kind==='crem'||s.kind==='altar'||(s.kind==='plots'&&sections.some(o=>o.kind==='plots'&&!o.unlocked&&o.order<s.order)) }));
   if(!S.cart) it.push({ label:'Тележка для гробов (1 гроб, толкать — G/🛒)', cost:250, buy:()=>{ S.cart={g:makeCart(),load:null,pushing:false}; S.cart.g.position.set(-1.5,0,17.5); } });
-  if(S.bHp<100) it.push({ label:`Ремонт здания (${S.bHp}/100)`, cost:Math.ceil((100-S.bHp)*1.8), buy:()=>{ S.bHp=100; } });
+  if(S.bHp<S.bMax) it.push({ label:`Ремонт здания (${S.bHp}/${S.bMax})`, cost:Math.ceil((S.bMax-S.bHp)*1.8), buy:()=>{ S.bHp=S.bMax; } });
   return it;
 }
 // Оружие и боеприпасы
@@ -249,7 +249,7 @@ function updateSim(dt){
   let rep=null; const ph=phaseOf(S.time);
   if(ph!==S.phase){ if(ph==='dusk') startDusk(); else if(ph==='night') startNight(); else if(ph==='dawn') rep=startDawn(); else startDay(); }
   if(S.phase==='day'){
-    if(player.hp<100&&player.hp>0) player.hp=Math.min(100,player.hp+dt*0.4); // медленная регенерация днём
+    if(player.hp<player.maxHp&&player.hp>0) player.hp=Math.min(player.maxHp,player.hp+dt*1.6); // медленная регенерация днём
     while(S.arrivals.length&&S.time>=S.arrivals[0]){ S.arrivals.shift(); const id=S.nextId++, c=makeCoffin(id); c.userData.id=id; c.userData.tier=1+Math.floor(Math.random()*S.level); c.userData.open=false; c.position.copy(freeSpot()); S.coffins.push(c); log(`Катафалк привёз покойника `); }
   } else if(S.phase==='night'){
     S.nightT+=dt*RATE.night;

@@ -1,7 +1,7 @@
 (function(){
 // Игрок: FPS-камера, движение, коллизии, модель инструмента в руках
 const camera = new THREE.PerspectiveCamera(70, innerWidth/innerHeight, 0.1, 200);
-const player = { pos:new THREE.Vector3(0,1.7,14), yaw:0, pitch:0, hp:100, speed:6, slow:0, tool:'shovel', carrying:null, trash:null };
+const player = { pos:new THREE.Vector3(0,1.7,14), yaw:0, pitch:0, hp:400, maxHp:400, speed:6, slow:0, tool:'shovel', carrying:null, trash:null };
 const shovel=new THREE.Group(), gun=new THREE.Group();
 function initPlayer(scene){
   scene.add(camera);
