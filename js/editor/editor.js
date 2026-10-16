@@ -8,7 +8,7 @@ root.innerHTML=`<div id="edbar"><b>Инструмент:</b> <span id="tools"></
 <button id="bSaveAs">Сохранить как…</button><button id="bDelete">Удалить</button>
 <button id="bImp">Импорт…</button><input type="file" id="edfile" accept=".js,.json" hidden>
 <button id="bExp">Экспорт файла</button><button id="bPlay">▶ Играть</button><button id="bClose">✕ Выход</button></div>
-<canvas id="edcv"></canvas><div id="edinfo"></div>
+<canvas id="edcv"></canvas><div id="edinfo"></div><div id="edzone" style="display:none">Зона: порядок покупки <input id="zord" type="number" min="0" style="width:45px"> цена $<input id="zpr" type="number" min="0" step="50" style="width:60px"><br><small>0 — стартовая (бесплатно), 1 — первая к покупке, 2 — вторая…</small></div>
 <div id="edhelp">ЛКМ — поставить / выбрать и тащить · ПКМ — панорама · колесо — масштаб · R — поворот · Del — удалить · Ctrl+Z — отмена · Стена: клики по точкам, Enter — закончить</div>`;
 const cv=document.getElementById('edcv'), g=cv.getContext('2d'), $=id=>document.getElementById(id);
 const clone=o=>JSON.parse(JSON.stringify(o));
@@ -42,7 +42,7 @@ function draw(){
   g.lineWidth=1; const [x0,z0]=S2W(0,0),[x1,z1]=S2W(cv.width,cv.height);
   for(let x=Math.floor(x0);x<=x1;x++){ if(view.s<5&&x%5) continue; const [a]=W2S(x,0); g.strokeStyle=x%5?'#2c3c27':'#3a4d33'; g.beginPath(); g.moveTo(a,0); g.lineTo(a,cv.height); g.stroke(); }
   for(let z=Math.floor(z0);z<=z1;z++){ if(view.s<5&&z%5) continue; const [,b]=W2S(0,z); g.strokeStyle=z%5?'#2c3c27':'#3a4d33'; g.beginPath(); g.moveTo(0,b); g.lineTo(cv.width,b); g.stroke(); }
-  M.zones.forEach(o=>{ rect(o.x,o.z,o.w,o.d,ZC[o.type]+'aa','#000'); txt(o.id+' '+o.type,o.x,o.z-o.d/2+1); });
+  M.zones.forEach(o=>{ rect(o.x,o.z,o.w,o.d,ZC[o.type]+'aa','#000'); txt(((o.type==='bare'||o.type==='wild')?'['+(o.order|0)+'] $'+(o.price|0)+' ':'')+o.id+' '+o.type,o.x,o.z-o.d/2+1); });
   M.roads.forEach(o=>rect(o.x,o.z,o.w,o.d,'#8a7350'));
   M.plots.forEach(o=>rect(o.x,o.z,1.6,2.6,'#4a3420','#c9a36a'));
   // стена
@@ -64,7 +64,9 @@ function validate(){ const w=[];
   if(M.plots.some(p=>!M.zones.some(z=>z.id===p.zone))) w.push('Есть участки вне зон (будут пропущены)');
   if(!M.buildings.some(b=>b.type==='bin')) w.push('Нет мусорного контейнера');
   return w; }
-function upd(){ document.querySelectorAll('#tools button').forEach(b=>b.classList.toggle('on',b.dataset.t===tool));
+const UNIQ=['office','morgue','crem','altar','bin','drop','merchant'];
+function upd(){ document.querySelectorAll('#tools button').forEach(b=>{ b.classList.toggle('on',b.dataset.t===tool); const t=b.dataset.t; b.disabled=t==='gate'?M.gates.length>0:(t.startsWith('b:')&&UNIQ.includes(t.slice(2))&&M.buildings.some(o=>o.type===t.slice(2))); if(b.disabled&&tool===t) tool='sel'; });
+  const zp=sel&&(sel.type==='bare'||sel.type==='wild')&&'order' in sel; $('edzone').style.display=zp?'':'none'; if(zp){ $('zord').value=sel.order; $('zpr').value=sel.price; }
   const w=validate(); let s=`Объектов: зданий ${M.buildings.length}, деревьев ${M.trees.length}, участков ${M.plots.length}, зон ${M.zones.length}`;
   if(sel) s+='\nВыбрано: '+(sel.type||sel.id||'')+` (${sel.x}, ${sel.z})`+(sel.rot!==undefined?' поворот '+sel.rot+'°':'');
   $('edinfo').innerHTML=s+(w.length?'\n<span class="warn">⚠ '+w.join('\n⚠ ')+'</span>':'\n✓ Карта корректна'); draw(); save(); }
@@ -89,10 +91,10 @@ onmousemove=e=>{ if(!drag) return;
   if(drag.rect){ drag.rect[2]=snap(wx); drag.rect[3]=snap(wz); draw(); } };
 onmouseup=()=>{ if(drag&&drag.rect){ const r=drag.rect, w=Math.abs(r[2]-r[0]), d=Math.abs(r[3]-r[1]);
     if(w>=1&&d>=1){ push(); const o={x:(r[0]+r[2])/2,z:(r[1]+r[3])/2,w,d};
-      if(tool==='road') M.roads.push(sel=o); else { let n=1; while(M.zones.some(q=>q.id==='Z'+n)) n++; Object.assign(o,{id:'Z'+n,type:zt,name:'Зона Z'+n,price:zt==='bare'?0:300}); M.zones.push(sel=o); } } }
+      if(tool==='road') M.roads.push(sel=o); else { let n=1; while(M.zones.some(q=>q.id==='Z'+n)) n++; Object.assign(o,{id:'Z'+n,type:zt,name:'Зона Z'+n,price:zt==='bare'?0:300,order:zt==='wild'?1+Math.max(0,...M.zones.map(q=>q.order|0)):0}); M.zones.push(sel=o); } } }
   if(drag&&(drag.obj||drag.rect)) upd(); drag=null; };
 cv.onwheel=e=>{ e.preventDefault(); view.s=Math.min(60,Math.max(3,view.s*(e.deltaY<0?1.15:1/1.15))); draw(); };
-onkeydown=e=>{ if(e.target.tagName==='INPUT') return;
+onkeydown=e=>{ if(e.target.tagName==='INPUT') return; if(e.code==='Escape'){ tool='sel'; upd(); }
   if(e.ctrlKey&&e.code==='KeyZ'){ if(undo.length){ M=JSON.parse(undo.pop()); sel=null; upd(); } e.preventDefault(); return; }
   if(e.code==='Enter'&&wallPts){ if(wallPts.length>=3){ push(); M.wall.pts=wallPts; } wallPts=[]; upd(); return; }
   if(!sel) return;
@@ -111,6 +113,7 @@ const exportText=()=>`// Карта кладбища «${name}». Положит
 $('bExp').onclick=()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([exportText()],{type:'text/javascript'})); a.download=fid()+'.js'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); };
 $('bPlay').onclick=()=>{ save(); localStorage.setItem('cg_mapsel','lib:'+name); sessionStorage.setItem('cg_autostart','1'); location.reload(); };
 window.CGED={get map(){return M;}, exportText, hit};
+$('zord').onchange=()=>{ push(); sel.order=Math.max(0,$('zord').value|0); upd(); }; $('zpr').onchange=()=>{ push(); sel.price=Math.max(0,$('zpr').value|0); upd(); };
 onresize=draw; fillLoad(); upd();
 }
 // экран заголовка: выбор карты + кнопка редактора

@@ -159,7 +159,7 @@ function dig(dt){
 function shopItems(){
   const it=[];
   if(S.level<5) it.push({ label:`Улучшить здание → ур.${S.level+1}: ${LEVELS[S.level+1].n}`, cost:UPG_COST[S.level], buy:()=>{ S.level++; } });
-  sections.filter(s=>!s.unlocked).forEach(s=>it.push({ label:`Открыть: ${s.name}${s.kind==='plots'?' (+места, нужна расчистка)':s.kind==='crem'?' (кремация)':' (пока заглушка)'}`, cost:s.price, buy:()=>{ unlockSection(s); if(s.id==='morgue') setMorgueLock(false); }, na:s.kind==='crem'||s.kind==='altar' }));
+  sections.filter(s=>!s.unlocked).forEach(s=>it.push({ label:`Открыть: ${s.kind==='plots'?'['+s.order+'] ':''}${s.name}${s.kind==='plots'?' (+места, нужна расчистка)':s.kind==='crem'?' (кремация)':' (пока заглушка)'}`, cost:s.price, buy:()=>{ unlockSection(s); if(s.id==='morgue') setMorgueLock(false); }, na:s.kind==='crem'||s.kind==='altar'||(s.kind==='plots'&&sections.some(o=>o.kind==='plots'&&!o.unlocked&&o.order<s.order)) }));
   if(!S.cart) it.push({ label:'Тележка для гробов (1 гроб, толкать — G/🛒)', cost:250, buy:()=>{ S.cart={g:makeCart(),load:null,pushing:false}; S.cart.g.position.set(-1.5,0,17.5); } });
   if(S.bHp<100) it.push({ label:`Ремонт здания (${S.bHp}/100)`, cost:Math.ceil((100-S.bHp)*1.8), buy:()=>{ S.bHp=100; } });
   return it;

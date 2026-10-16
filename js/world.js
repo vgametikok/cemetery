@@ -34,7 +34,7 @@ const sun = new THREE.DirectionalLight(0xfff0d0, 1.4);
 const amb = new THREE.HemisphereLight(0xcfe0ff, 0x404030, 0.8);
 const lamps = [];
 // Зоны: plots — участки под могилы; остальное — особые объекты
-const sections = (MAP.zones||[]).map(z=>({ id:z.id, name:z.name||z.id, type:z.type, kind:(z.type==='bare'||z.type==='wild')?'plots':z.type, unlocked:z.type==='bare', price:z.price||0, cx:z.x, cz:z.z, w:z.w, d:z.d }));
+const sections = (MAP.zones||[]).map(z=>({ id:z.id, name:z.name||z.id, type:z.type, kind:(z.type==='bare'||z.type==='wild')?'plots':z.type, order:z.order|0, unlocked:(z.type==='bare'||z.type==='wild')&&!(z.order|0), price:z.price||0, cx:z.x, cz:z.z, w:z.w, d:z.d }));
 if(bget('morgue').length){ const m=bget('morgue')[0]; sections.push({ id:'morgue', name:'Морг', kind:'morgue', unlocked:false, price:1000, cx:m.x, cz:m.z, w:8, d:6 }); }
 let roads=[];
 const CREMB = bpos('crem'); const CREM_DOOR = CREMB?new THREE.Vector3(CREMB.x,0,CREMB.z+4.5):new THREE.Vector3(1e4,0,1e4);
