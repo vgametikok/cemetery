@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Cemetery Guys — Кладбищенский Смотритель</title>
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="css/style.css">
@@ -23,10 +23,9 @@
 <p id="ctrlhelp"></p><div style="margin:8px 0">Карта: <select id="mapsel"></select></div><button id="playbtn">Играть</button> <button id="edbtn">Редактор карт</button></div>
 <div id="mobile" class="hidden">
  <div id="joy"><div id="knob"></div></div>
- <div id="mbtns">
-  <button data-k="fire">🔫/⛏</button><button data-k="interact">E</button>
-  <button data-k="tool">Q</button><button data-k="interact">☰</button><button data-k="night">N</button><button data-k="inv">🎒</button><button data-k="heal">❤</button><button data-k="reload">R</button><button data-k="cart">🛒</button><button data-k="run">🏃</button><button data-k="pause">⏸</button>
- </div>
+ <div id="mtop"><button data-k="inv">🎒</button><button data-k="pause">☰</button><button id="fsbtn">⛶</button></div>
+ <div id="mside"><button data-k="reload">R</button><button data-k="heal">❤</button><button data-k="run">🏃</button><button data-k="tool">Q</button></div>
+ <div id="mctx"><button id="ebtn" data-k="interact">E</button><button id="gbtn" data-k="cart">G · Тележка</button></div>
 </div>
 <script src="js/vendor/three.min.js"></script>
 <script src="js/input.js"></script>

@@ -6,7 +6,7 @@ addEventListener('resize',()=>{ camera.aspect=innerWidth/innerHeight; camera.upd
 buildWorld(); buildPlots(); finishWorld(); initPlayer(scene); setLogger(log); initHotbar();
 const mobile=isMobile(); initDesktop(renderer.domElement); if(mobile) initMobile(renderer.domElement);
 document.getElementById('ctrlhelp').innerHTML = mobile
-  ? 'Джойстик — движение, свайп — обзор, 🔫/⛏ — стрелять/копать, E — взять/положить, Q — сменить инструмент, ❤ — аптечка, R — перезарядка, 🛒 — тележка, 🏃 — бег, ☰ — E/магазин у компьютера, ⏸ — пауза, N — день/ночь'
+  ? 'Левая половина — стик движения, правая — обзор. Тап — выстрел/поставить турель, удержание — копать/засыпать/расчищать. Кнопка E/G появляется, когда есть действие. Слоты внизу, 🎒 — инвентарь, ☰ — пауза, ⛶ — весь экран, R — перезарядка, ❤ — аптечка, 🏃 — бег, Q — инструмент.'
   : 'WASD — движение, мышь — обзор, ЛКМ — копать/стрелять, E — взять/положить, Shift — бег, R — перезарядка, G — тележка, H — аптечка, Q/1/2 — инструмент (2 повторно — сменить оружие), E у компьютера в офисе — магазин, Esc — пауза, N — день/ночь (тест)';
 let overShown=false, running=false, paused=false, pauseOn=false, pauseT=0;
 const lockPtr=()=>{ try{ const r=renderer.domElement.requestPointerLock?.(); r&&r.catch&&r.catch(()=>{}); }catch(e){} };
