@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Cemetery Guys — Кладбищенский Смотритель</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/editor.css">
+</head><body>
+<div id="hud">
+ <div id="stats"></div>
+ <div id="hint"></div>
+ <div id="msg"></div>
+ <div id="cross">+</div>
+ <div id="bar"><div id="barfill"></div></div>
+ <div id="hp"><span>🏛 Дом</span><div id="hpbar"><div id="hpfill"></div></div><span>🧍 Вы</span><div id="hpbar2" class="hpb"><div id="phpfill"></div></div></div>
+ <div id="hotbar"></div>
+</div>
+<div id="menu" class="hidden"></div>
+<div id="report" class="hidden"></div>
+<div id="inv" class="hidden"></div>
+<div id="pause" class="hidden"></div>
+<div id="start"><h1>Cemetery Guys</h1><p>Кладбищенский Смотритель — прототип</p>
+<p id="ctrlhelp"></p><div style="margin:8px 0">Карта: <select id="mapsel"></select></div><button id="playbtn">Играть</button> <button id="edbtn">Редактор карт</button></div>
+<div id="mobile" class="hidden">
+ <div id="joy"><div id="knob"></div></div>
+ <div id="mbtns">
+  <button data-k="fire">🔫/⛏</button><button data-k="interact">E</button>
+  <button data-k="tool">Q</button><button data-k="interact">☰</button><button data-k="night">N</button><button data-k="inv">🎒</button><button data-k="heal">❤</button><button data-k="reload">R</button><button data-k="cart">🛒</button><button data-k="run">🏃</button><button data-k="pause">⏸</button>
+ </div>
+</div>
+<script src="js/vendor/three.min.js"></script>
+<script src="js/input.js"></script>
+<script src="js/mobile.js"></script>
+<script src="maps/index.js"></script>
+<script src="js/mapstore.js"></script>
+<script src="js/world.js"></script>
+<script src="js/player.js"></script>
+<script src="js/enemies.js"></script>
+<script src="js/sim.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+<script src="js/editor/editor.js"></script>
+</body></html>

@@ -1,0 +1,38 @@
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:sans-serif;color:#eee;touch-action:none;user-select:none}
+canvas{display:block}
+#hud{position:fixed;inset:0;pointer-events:none}
+#stats{position:absolute;top:8px;left:8px;background:#0008;padding:8px 12px;border-radius:6px;font-size:14px;line-height:1.5}
+#hint{position:absolute;bottom:90px;width:100%;text-align:center;font-size:16px;text-shadow:0 0 4px #000}
+#msg{position:absolute;top:30%;width:100%;text-align:center;font-size:22px;color:#fd6;text-shadow:0 0 6px #000}
+#cross{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:22px}
+#bar{position:absolute;left:50%;top:55%;width:160px;height:8px;margin-left:-80px;background:#0008;display:none}
+#barfill{height:100%;width:0;background:#c96}
+#report,#start,#inv,#pause,#sell{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:#111e;border:1px solid #555;border-radius:10px;padding:18px;min-width:300px;max-width:94vw;max-height:90vh;overflow:auto;text-align:center}
+#report button,#start button,#inv button,#pause button,#sell button{display:block;width:100%;margin:6px 0;padding:10px;font-size:15px;background:#334;color:#eee;border:1px solid #667;border-radius:6px}
+#menu button:disabled{opacity:.4}
+.hidden{display:none!important}
+#mobile{position:fixed;inset:0;pointer-events:none}
+#joy{position:absolute;left:24px;bottom:24px;width:130px;height:130px;border-radius:50%;background:#fff2;pointer-events:auto}
+#knob{position:absolute;left:40px;top:40px;width:50px;height:50px;border-radius:50%;background:#fff6}
+#mbtns{position:absolute;right:14px;bottom:20px;display:grid;grid-template-columns:repeat(2,64px);gap:10px;pointer-events:auto}
+#mbtns button{width:64px;height:64px;border-radius:50%;background:#fff3;color:#fff;border:1px solid #fff6;font-size:18px}
+#mbtns button[data-k=fire]{grid-column:span 2;width:138px;border-radius:32px}
+#hp{position:absolute;top:8px;right:8px;background:#0008;padding:6px 10px;border-radius:6px;font-size:13px;display:flex;gap:8px;align-items:center}
+#hpbar{width:140px;height:12px;background:#400;border:1px solid #888}#hpfill{height:100%;width:100%;background:#3c4}
+#hotbar{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;pointer-events:auto}
+#hotbar div{width:64px;height:52px;background:#0009;border:2px solid #666;border-radius:6px;font-size:11px;text-align:center;padding-top:4px;cursor:pointer}
+#hotbar div.sel{border-color:#fd6}#hotbar b{display:block;font-size:18px}
+@media (pointer:coarse){#hotbar{bottom:168px;left:8px;transform:none}#hotbar div{width:46px;height:46px;font-size:9px}#stats{font-size:11px;padding:5px 8px}#hp{top:auto;bottom:226px;left:8px;right:auto}#hint{bottom:280px}}
+#menu.shop{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(860px,96vw);max-height:86vh;overflow:auto;background:#f4f5f7;color:#222;border-radius:10px;box-shadow:0 8px 40px #000a;font-family:Arial,sans-serif}
+.shopbar{display:flex;justify-content:space-between;align-items:center;background:#2b6fd6;color:#fff;padding:10px 14px;position:sticky;top:0;font-weight:bold}
+.shopbar input{width:min(300px,40vw);padding:6px;border-radius:14px;border:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;padding:12px}
+.card{background:#fff;border:1px solid #dde;border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px;text-align:left}
+.card .ic{font-size:34px;text-align:center;background:#eef2f8;border-radius:6px;padding:8px}.card .nm{font-size:13px;flex:1}.card .pr{font-size:18px;font-weight:bold;color:#c0392b}
+.card button{padding:8px;border:0;border-radius:6px;background:#f5a623;color:#222;font-weight:bold}.card button:disabled{background:#ccc;color:#777}
+.card.na{opacity:.6}.small{font-size:12px;color:#666;text-align:center;margin:4px}
+#mbtns{grid-template-columns:repeat(2,64px)}
+#hp{flex-wrap:wrap;max-width:260px}#hpbar2{width:140px;height:12px;background:#400;border:1px solid #888}#phpfill{height:100%;width:100%;background:#4af}
+#sell{background:#2a1f14ee;border-color:#a87}
+.tabs{display:flex;gap:6px;padding:8px 12px 0}.tabs button{flex:1;padding:8px;border:0;border-radius:6px 6px 0 0;background:#dfe5ee;font-weight:bold;color:#333}.tabs button.on{background:#2b6fd6;color:#fff}
+#mbtns{grid-template-columns:repeat(3,56px)!important;gap:8px}#mbtns button{width:56px;height:56px;font-size:16px}#mbtns button[data-k=fire]{grid-column:span 3;width:184px}
